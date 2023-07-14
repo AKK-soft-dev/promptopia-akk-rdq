@@ -1,6 +1,6 @@
 # Prompotia
 
-I have learnt Next.js from JSM crash course and he taught me how to create this project. But I added additional features and integrated with my own data fetching library([react-data-query](https://www.npmjs.com/package/react-data-query)).
+I have learnt Next.js from [JSM crash course](https://youtu.be/wm5gMKuwSYk) and he taught me how to create this project. But I added additional features and integrated with my own data fetching library([react-data-query](https://www.npmjs.com/package/react-data-query)).
 
 ## Description
 
