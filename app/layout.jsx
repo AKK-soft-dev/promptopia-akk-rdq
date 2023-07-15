@@ -1,11 +1,14 @@
 import "@/styles/globals.css";
-import DataQueryProviderClient from "@components/DataQueryProvider";
 import Nav from "@components/Nav";
 import Provider from "@components/Provider";
+import { DataQueryProvider } from "react-data-query";
 
 export const metadata = {
   title: "Promptopia",
   description: "Discover & Share AI Prompts",
+  icons: {
+    icon: "/public/logo.svg",
+  },
 };
 
 const RootLayout = ({ children }) => {
@@ -19,7 +22,7 @@ const RootLayout = ({ children }) => {
 
           <main className="app">
             <Nav />
-            <DataQueryProviderClient>{children}</DataQueryProviderClient>
+            <DataQueryProvider>{children}</DataQueryProvider>
           </main>
         </Provider>
       </body>
