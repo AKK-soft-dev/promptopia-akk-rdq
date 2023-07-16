@@ -2,7 +2,7 @@
 import Profile from "@components/Profile";
 import SyncingIndicator from "@components/SyncingIndicator";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useDataQuery } from "react-data-query";
+import { useDataQuery, useDataQueryMagic } from "react-data-query";
 
 const fetcher = (context) => {
   const userId = context.dataQueryKey[1].toString();
@@ -18,6 +18,7 @@ const UserProfile = ({ params }) => {
   } = useDataQuery(["posts", userId], fetcher, {
     autoFetchEnabled: !!userId,
   });
+  const { setQueryData, cancelQuery } = useDataQueryMagic();
   const router = useRouter();
   const searchParams = useSearchParams();
   const name = searchParams.get("name");
@@ -33,12 +34,19 @@ const UserProfile = ({ params }) => {
 
     if (hasConfirmed) {
       try {
-        await fetch(`/api/prompt/${post?._id}`, { method: "DELETE" });
-
-        const filteredPosts = posts.filter((p) => p._id !== post._id);
-        setPosts(filteredPosts);
+        const dataQueryKey = ["posts", userId];
+        const res = await fetch(`/api/prompt/${post?._id}`, {
+          method: "DELETE",
+        });
+        if (!res.ok) {
+          throw new Error(`${res.status}: Can't delete prompt!`);
+        }
+        await cancelQuery(dataQueryKey);
+        setQueryData(dataQueryKey, (oldPosts) =>
+          oldPosts.filter((p) => p._id !== post._id)
+        );
       } catch (err) {
-        console.log(err);
+        alert(err.message);
       }
     }
   };
@@ -48,6 +56,7 @@ const UserProfile = ({ params }) => {
       {isFetching && !isLoading && <SyncingIndicator />}
       <Profile
         name={name}
+        isLoadingPosts={isLoading}
         desc={`Welcome to ${name}'s personalized profile page`}
         data={posts}
         handleEdit={handleEdit}

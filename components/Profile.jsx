@@ -1,7 +1,14 @@
 import LoadingIndicator from "./LoadingIndicator";
 import PromptCard from "./PromptCard";
 
-const Profile = ({ name, desc, data, handleEdit, handleDelete }) => {
+const Profile = ({
+  name,
+  desc,
+  isLoadingPosts,
+  data,
+  handleEdit,
+  handleDelete,
+}) => {
   return (
     <section className="w-full">
       <h1 className="head_text text-left">
@@ -18,8 +25,10 @@ const Profile = ({ name, desc, data, handleEdit, handleDelete }) => {
               handleDelete={() => handleDelete && handleDelete(post)}
             />
           ))
-        ) : (
+        ) : isLoadingPosts ? (
           <LoadingIndicator />
+        ) : (
+          <p>No posts here!</p>
         )}
       </div>
     </section>

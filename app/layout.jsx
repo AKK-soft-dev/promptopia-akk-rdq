@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
+import DataQueryProviderClient from "@components/DataQueryProviderClient";
 import Nav from "@components/Nav";
 import Provider from "@components/Provider";
-import { DataQueryProvider } from "react-data-query";
 
 export const metadata = {
   title: "Promptopia",
@@ -22,7 +22,7 @@ const RootLayout = ({ children }) => {
 
           <main className="app">
             <Nav />
-            <DataQueryProvider>{children}</DataQueryProvider>
+            <DataQueryProviderClient>{children}</DataQueryProviderClient>
           </main>
         </Provider>
       </body>

@@ -17,7 +17,8 @@ const fetcher = (context) => {
 const MyProfile = () => {
   const { data: session } = useSession();
   const userId = session?.user?.id;
-  const { getQueryData, setQueryData, invalidateQuery } = useDataQueryMagic();
+  const { getQueryData, setQueryData, invalidateQuery, cancelQuery } =
+    useDataQueryMagic();
   // const [posts, setPosts] = useState([]);
   const {
     data: posts = [],
@@ -30,24 +31,33 @@ const MyProfile = () => {
     (post) => {
       return fetch(`/api/prompt/${post._id.toString()}`, {
         method: "DELETE",
+      }).then((res) => {
+        if (!res.ok) throw new Error(`${res.status}: Can't delete prompt`);
       });
     },
     {
       async onMutate(post) {
         const dataQueryKey = ["posts", userId];
         const prevPosts = getQueryData(dataQueryKey);
+        await cancelQuery(dataQueryKey);
         setQueryData(dataQueryKey, (oldPosts) =>
           oldPosts.filter((p) => p._id !== post._id)
         );
 
         return { prevPosts };
       },
+      onSuccess() {
+        alert("Successfully deleted prompt!");
+      },
       onError(_err, _post, context) {
-        console.log({ _err, context });
         setQueryData(["posts", userId], context.prevPosts);
+        alert(_err.message);
       },
       onSettled() {
-        invalidateQuery(["posts", userId]);
+        (async () => {
+          await cancelQuery(["posts", userId]);
+          invalidateQuery(["posts", userId]);
+        })();
       },
     }
   );
@@ -73,6 +83,7 @@ const MyProfile = () => {
       <Profile
         name="My"
         desc="Welcome to your personalized profile page"
+        isLoadingPosts={isLoading}
         data={posts}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
