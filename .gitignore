@@ -36,3 +36,4 @@ yarn-error.log*
 next-env.d.ts
 
 /crash-codes-and-notes
+/components/EditBioForm.jsx
